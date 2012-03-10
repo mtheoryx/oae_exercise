@@ -6,8 +6,8 @@ $(document).ready(function(){
         {"id":1, "start":610, "end":670},
         {"id":2, "start":30, "end":150},
         {"id":3, "start":540, "end":600},
-        {"id":4, "start":560, "end":620}
-//        {"id":5, "start":520 , "end": 570}
+        {"id":4, "start":560, "end":620},
+        {"id":5, "start":520 , "end": 570}
         
     ]; //end events array
     
@@ -25,19 +25,14 @@ $(document).ready(function(){
             this.location = "Event Location " + counter;
             this.duration = this.end - this.start;
             this.top_position = this.start;
-            this.collisions = 0;
+            this.width = 0;
+            this.left;
             this.collision_members = new Array();
-            
-            counter++;
+            counter++; //just convenience here for display purposes
         });
         
-        $.each(events_array, function(){
-            count_collisions(this, events_array);
-        });
-        $.each(events_array, function(){
-            //starting with the earliest event, going down the timeline
-            set_position(this, events_array);
-        });
+        // set the left position and width of each event
+        $.each(events_array, function(){set_position(this, events_array);});
         
         return events_array;
         
@@ -46,71 +41,52 @@ $(document).ready(function(){
     //  @TODO: set width
     //  @TODO: set left position
     function set_position(event, events_array){
+        var me = event; //just to make it a little less confusing
         
-        var my = event;
+        console.log('Checking collisions for ' + me.id);
         
+        // 1. Check for collisions, add to an array
+        $.each(events_array, function(){
+            if ( collides(event, this) ) { me.collision_members.push(this.id); } 
+        }); //end looping through the whole array        
         
-        //no collisions at all
-        if (my.collisions < 1) { event.width = global_width / 1; return true;} 
-        else {
-            // if we collisions,
-            // it's possible we're overlapping 2 or more events
-            // but those could be sequential events
-            // let's check that and adjust our collision count
+        if (me.collision_members.length < 1) { me.width = global_width; me.left = 0; } 
+        else //sharing space with other events 
+        {
+            console.log('custom width and left here');
             
-            console.log('Checking duplicate collisions for ' + my.id);
-            console.log(my.collision_members);
-            $.each(my.collision_members, function(){
-                console.log('I am ' + event.id + ' and I collide with ' + this);
+            if ( (typeof me.left == "undefined") || (typeof me.left == null) ) {
+                //if i have no left set, im first
+                me.left = 0;
+                if ( me.width == 0 ) {
+                    //give my shared width to all my collision mates
+                    me.width = ( global_width/(1 + me.collision_members.length) );
+                    var l = 1;
+                    $.each(me.collision_members, function(){
+                        var them = events_array[findArrayIndexByObjectId(events_array, this)];
 
-                //access the actual object whose ID we stored by number only
-                var time_mate = events_array[findArrayIndexByObjectId(events_array, this)];
-
-                console.log(time_mate.collision_members);
-
-                $.each(time_mate.collision_members, function(){
-                    
-                    //if they collide with the same as me, i have a good count
-                    //if not, i may have double counted
-                    if ( ($.inArray(parseInt(this), my.collision_members) > -1) && (this != my.id)) {
-                        console.log('' + this);
-                        console.log(this + ' is probably not a dupe.');
-                    } else if (( $.inArray(parseInt(this), my.collision_members) == -1 ) && (this != my.id)) {
-                        console.log('' + this);
-                        console.log(this + ' is a dupe.');
-                        
-                        //remove it from my collision list
-                        //what position is this in my array?
-                    }
-  
-                    
-                });
+                        if (them.width == 0) {
+                            them.width = me.width;
+                            them.left = l;
+                        } else {
+                            me.width = them.width;
+                            
+                        }
+                        l++;
+                        //set their left values, too
+                            
+                    });
+                }
                 
-                console.log(time_mate);
-
-            }); //end looping through their collisions
-            
-            //@TODO: set width
-            //if they have a width, take theirs
-            //if they don't, set mine according to collisions
-            
-        
-            
-        } //end duplicate collision adjustment check
-        
-        //@TODO: set left position
+            }
+        } //end handling collisions
         
         
+         
     } //end set_position() function
     
-    function count_collisions(event, events_array){
-        $.each(events_array, function(){
-            if ( collides(event, this) ) { event.collision_members.push(this.id); }
-        });
-        event.collisions = event.collision_members.length;
-        return true;
-    } //end count_collisions() function
     
+    //Clever utility to check event collision
     function collides(eventA, eventB){
         if (eventA.id == eventB.id) { return false; }
         return ((eventA.start < eventB.end) & (eventA.end > eventB.start)) ? true : false;
