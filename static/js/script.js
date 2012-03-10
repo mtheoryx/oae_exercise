@@ -1,6 +1,11 @@
 $(document).ready(function(){
     //@TODO: set up the time labels on the left, 1/2 hour increments, pixel-based
     var global_width = 600;
+    
+    //@TODO: abstract to jquery plugin
+    
+    //@TODO: abstract the width from the make_events() function
+    
     //Set up some event input objects
     var events_raw_input = [
         {"id":1, "start":610, "end":670},
@@ -33,13 +38,11 @@ $(document).ready(function(){
         
         // set the left position and width of each event
         $.each(events_array, function(){set_position(this, events_array);});
-        
         return events_array;
         
     } //end make_events() function
     
-    //  @TODO: set width
-    //  @TODO: set left position
+    
     function set_position(event, events_array){
         var me = event; //just to make it a little less confusing
         
@@ -68,21 +71,15 @@ $(document).ready(function(){
                         if (them.width == 0) {
                             them.width = me.width;
                             them.left = l;
-                        } else {
-                            me.width = them.width;
-                            
-                        }
+                        } else { me.width = them.width;}
                         l++;
                         //set their left values, too
                             
-                    });
+                    }); //end iteration over my collision members
                 }
-                
             }
         } //end handling collisions
-        
-        
-         
+    
     } //end set_position() function
     
     
@@ -100,7 +97,7 @@ $(document).ready(function(){
         var aStart = a.start;
         var bStart = b.start;
         return ( (aStart < bStart) ? -1 : ((aStart > bStart) ? 1 : 0) );
-    }
+    } //end sort_by_start_time() function
     
     function findArrayIndexByObjectId(set, needleID){
         var TheIndex;
@@ -111,9 +108,9 @@ $(document).ready(function(){
            } 
         }
         return TheIndex;
-    }
+    } //end findArrayIndexByObjectId() function
     
-    //add events to the canvas correctly
+    //create array of event objects
     var events = make_events(events_raw_input);
     
     //debug info
