@@ -78,16 +78,54 @@ $(document).ready(function(){
     
     } //end set_position() function
     
+    function display_events(events_array){
+        console.log(events_array);
+        
+        var event_canvas = $('div#event_canvas');
+            event_canvas.css("position", "relative");
+
+        $.each(events_array, function(){
+            var new_event_html = '<div class="event" id="'+ this.id + '">';
+            
+                new_event_html += '<p class="event_title">'+ this.title +'</p>';
+                new_event_html +='<p class="event_location">' + this.location + '</p>';
+                
+                new_event_html += '</div>';
+            
+            event_canvas.append(new_event_html);
+            
+            //style event based on previously calculated properties
+            var new_event = $('div#' + this.id);
+            
+            new_event.css("background", "yellow");
+            
+            //set top, height, left, and width
+            new_event.css("position", "absolute");
+            new_event.css("padding", "0");
+            new_event.css("margin", "0");
+            new_event.css("top", this.start + 'px');
+            new_event.css("width", this.width + 'px');
+            var left_pixels = ( (this.width) * (this.left) );
+            new_event.css("left", left_pixels + 'px')
+                     .css("height", this.duration + 'px');
+            
+            console.log(new_event);
+        });
+            
+        
+
+//        console.log(new_event_html);
+        
+    }
+    /*
+        utility functions
+    */
     
     //Clever utility to check event collision
     function collides(eventA, eventB){
         if (eventA.id == eventB.id) { return false; }
         return ((eventA.start < eventB.end) & (eventA.end > eventB.start)) ? true : false;
     } //end collides() function
-    
-    /*
-        utility functions
-    */
     
     function sort_by_start_time(a,b){
         var aStart = a.start;
@@ -112,21 +150,6 @@ $(document).ready(function(){
     //debug info
     //console.log(events);
     
-    // workDay object, for later use by jquery plugin defaults
-//    var workDay = {
-//        startTime: 0900,
-//        endTime: 2100,
-//        hours: function(){
-//            return ( (this.endTime - this.startTime)/100);
-//        },
-//        minutes: function(){
-//            return (this.hours() * 60);
-//        }
-//        
-//    };
+    display_events(events);
     
-    //@TODO: Use the workday object to set up the calendar hour labels
-//    var labels = new Array();
-//    
-//    console.log(workDay);
 });
