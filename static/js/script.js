@@ -1,5 +1,5 @@
 $(document).ready(function(){
-    //@TODO: set up the time labels on the left, 1/2 hour increments, pixel-based
+
     var global_width = 600;
     
     //@TODO: abstract to jquery plugin
@@ -46,9 +46,7 @@ $(document).ready(function(){
     function set_position(event, events_array){
         var me = event; //just to make it a little less confusing
         
-        console.log('Checking collisions for ' + me.id);
-        
-        // 1. Check for collisions, add to an array
+        // Check for collisions, add to an array
         $.each(events_array, function(){
             if ( collides(event, this) ) { me.collision_members.push(this.id); } 
         }); //end looping through the whole array        
@@ -56,8 +54,6 @@ $(document).ready(function(){
         if (me.collision_members.length < 1) { me.width = global_width; me.left = 0; } 
         else //sharing space with other events 
         {
-            console.log('custom width and left here');
-            
             if ( (typeof me.left == "undefined") || (typeof me.left == null) ) {
                 //if i have no left set, im first
                 me.left = 0;
@@ -114,6 +110,23 @@ $(document).ready(function(){
     var events = make_events(events_raw_input);
     
     //debug info
-    console.log(events);
+    //console.log(events);
     
+    // workDay object, for later use by jquery plugin defaults
+//    var workDay = {
+//        startTime: 0900,
+//        endTime: 2100,
+//        hours: function(){
+//            return ( (this.endTime - this.startTime)/100);
+//        },
+//        minutes: function(){
+//            return (this.hours() * 60);
+//        }
+//        
+//    };
+    
+    //@TODO: Use the workday object to set up the calendar hour labels
+//    var labels = new Array();
+//    
+//    console.log(workDay);
 });
