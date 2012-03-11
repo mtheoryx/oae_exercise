@@ -11,8 +11,8 @@ $(document).ready(function(){
         {"id":1, "start":610, "end":670},
         {"id":2, "start":30, "end":150},
         {"id":3, "start":540, "end":600},
-        {"id":4, "start":560, "end":620},
-        {"id":5, "start":520 , "end": 570}
+        {"id":4, "start":560, "end":620}
+        //{"id":5, "start":520 , "end": 570} //just an additional event for logic testing
         
     ]; //end events array
     
@@ -38,10 +38,9 @@ $(document).ready(function(){
         
         // set the left position and width of each event
         $.each(events_array, function(){set_position(this, events_array);});
-        return events_array;
         
+        return events_array;
     } //end make_events() function
-    
     
     function set_position(event, events_array){
         var me = event; //just to make it a little less confusing
@@ -79,44 +78,38 @@ $(document).ready(function(){
     } //end set_position() function
     
     function display_events(events_array){
-        console.log(events_array);
         
         var event_canvas = $('div#event_canvas');
             event_canvas.css("position", "relative");
 
         $.each(events_array, function(){
             var new_event_html = '<div class="event" id="'+ this.id + '">';
-            
+                new_event_html += '<div class="event_inner">';
                 new_event_html += '<p class="event_title">'+ this.title +'</p>';
                 new_event_html +='<p class="event_location">' + this.location + '</p>';
-                
-                new_event_html += '</div>';
+                new_event_html += '</div></div>';
             
+            //add this event to the canvas
             event_canvas.append(new_event_html);
             
             //style event based on previously calculated properties
             var new_event = $('div#' + this.id);
             
-            new_event.css("background", "yellow");
-            
             //set top, height, left, and width
-            new_event.css("position", "absolute");
-            new_event.css("padding", "0");
-            new_event.css("margin", "0");
-            new_event.css("top", this.start + 'px');
-            new_event.css("width", this.width + 'px');
-            var left_pixels = ( (this.width) * (this.left) );
-            new_event.css("left", left_pixels + 'px')
-                     .css("height", this.duration + 'px');
+            new_event.css("position", "absolute")
+                    .css("padding", "0")
+                    .css("margin", "0")
+                    .css("top", this.start + 'px')
+                    .css("width", this.width + 'px')
+                    .css("left", ( (this.width) * (this.left) ) + 'px')
+                    .css("height", this.duration + 'px');
             
-            console.log(new_event);
+            //correct for inner div
+            new_event.children("div.event_inner").css("height", (this.duration - 8) + 'px');
         });
             
-        
-
-//        console.log(new_event_html);
-        
-    }
+    }// end display_events() function
+    
     /*
         utility functions
     */
@@ -150,6 +143,7 @@ $(document).ready(function(){
     //debug info
     //console.log(events);
     
+    //display the events
     display_events(events);
     
 });
