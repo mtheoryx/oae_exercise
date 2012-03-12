@@ -1,9 +1,11 @@
 # Basic Programming Exercise for a front end role
 
 ## Usage
-
-    In a php-enabled web directory, run:
+	
+    Download the zip, or clone from github:
     
     git clone git@github.com:mtheoryx/oae_exercise.git
     
-    Open index.php in your favorite browser. Enjoy!
+    Open index.html in your favorite browser. 
+
+	Enjoy!
